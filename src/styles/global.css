@@ -49,8 +49,10 @@
   --radius-sm: 8px;
 }
 
+/* Dark tokens, defined once and applied to two selectors below. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  /* System preference is dark — apply unless the visitor forced light. */
+  :root:not([data-theme="light"]) {
     --bg: #0f1216;
     --bg-subtle: #151a20;
     --surface: #161b22;
@@ -63,6 +65,21 @@
     --code-bg: #11161c;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
   }
+}
+
+/* Visitor explicitly chose dark (overrides system preference). */
+:root[data-theme="dark"] {
+  --bg: #0f1216;
+  --bg-subtle: #151a20;
+  --surface: #161b22;
+  --border: #262d36;
+  --text: #e7eaee;
+  --text-muted: #9aa4b0;
+  --accent: #6ea0ff;
+  --accent-hover: #8fb6ff;
+  --accent-contrast: #0f1216;
+  --code-bg: #11161c;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 /* ------------------------------ base ------------------------------------ */
@@ -230,6 +247,65 @@ main {
 .nav a[aria-current="page"] {
   color: var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Theme toggle: hidden until JS enables it, so no-JS visitors keep system theme. */
+.theme-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.js .theme-toggle {
+  display: inline-flex;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--bg-subtle);
+}
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* Show the icon that matches the theme the toggle will switch *to*. */
+.theme-toggle .icon-sun {
+  display: none;
+}
+.theme-toggle .icon-moon {
+  display: block;
+}
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .icon-sun {
+    display: block;
+  }
+  :root:not([data-theme="light"]) .theme-toggle .icon-moon {
+    display: none;
+  }
 }
 
 /* ---------------------------- footer ----------------------------------- */

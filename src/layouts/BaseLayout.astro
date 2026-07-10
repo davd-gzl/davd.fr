@@ -18,6 +18,17 @@ const { title, description, image, type } = Astro.props;
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} image={image} type={type} />
+    <!-- Apply saved theme before paint to avoid a flash; enable JS-only UI. -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'dark' || t === 'light') d.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

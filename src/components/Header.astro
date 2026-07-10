@@ -1,5 +1,6 @@
 ---
 import { site } from '../config/site';
+import ThemeToggle from './ThemeToggle.astro';
 
 // Mark the active nav item. A link is current if the path matches exactly,
 // or (for section links like /projects) if the path is nested under it.
@@ -14,14 +15,17 @@ function isCurrent(href: string): boolean {
 <header class="site-header">
   <div class="container">
     <a class="brand" href="/">{site.shortName}</a>
-    <nav class="nav" aria-label="Primary">
-      {
-        site.nav.map((item) => (
-          <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
-            {item.label}
-          </a>
-        ))
-      }
-    </nav>
+    <div class="header-right">
+      <nav class="nav" aria-label="Primary">
+        {
+          site.nav.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+      <ThemeToggle />
+    </div>
   </div>
 </header>

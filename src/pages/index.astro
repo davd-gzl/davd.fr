@@ -1,13 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import WikiCard from '../components/WikiCard.astro';
 import { site } from '../config/site';
-import { getProjects } from '../lib/content';
+import { getProjects, getWikiEntries, wikiUpdated } from '../lib/content';
 
 const projects = await getProjects();
 // Show featured on the home page; fall back to the most recent few.
 const featured = projects.filter((p) => p.data.featured).slice(0, 3);
-const highlights = (featured.length > 0 ? featured : projects.slice(0, 3));
+const highlights = featured.length > 0 ? featured : projects.slice(0, 3);
+
+const wiki = await getWikiEntries();
+const recentNotes = wiki.slice(0, 3);
 ---
 
 <BaseLayout>
@@ -50,12 +54,30 @@ const highlights = (featured.length > 0 ? featured : projects.slice(0, 3));
 
   <section class="container section">
     <div class="section-head">
-      <h2>Personal wiki</h2>
+      <h2>Latest from the wiki</h2>
       <a href="/wiki">Open the wiki →</a>
     </div>
-    <p class="lead">
+    <p class="lead" style="margin-bottom: var(--space-5)">
       A living knowledge base — notes, how-tos, and references I collect as I build.
-      Everything is written in the open and grows over time.
     </p>
+    {
+      recentNotes.length > 0 ? (
+        <ul class="card-grid">
+          {recentNotes.map((e) => (
+            <WikiCard
+              href={`/wiki/${e.id}`}
+              title={e.data.title}
+              summary={e.data.summary}
+              updated={wikiUpdated(e)}
+              tags={e.data.tags}
+            />
+          ))}
+        </ul>
+      ) : (
+        <div class="empty-state">
+          <p style="margin:0">Notes are on their way.</p>
+        </div>
+      )
+    }
   </section>
 </BaseLayout>

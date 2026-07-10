@@ -26,6 +26,13 @@ export async function getWikiEntries(): Promise<CollectionEntry<'wiki'>[]> {
   return entries.sort((a, b) => wikiUpdated(b).getTime() - wikiUpdated(a).getTime());
 }
 
+/** Rough reading time in minutes from raw Markdown body (≈200 wpm, min 1). */
+export function readingTime(body: string | undefined): number {
+  if (!body) return 1;
+  const words = body.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
 /** Group wiki entries by category, categories sorted alphabetically. */
 export function groupByCategory(
   entries: CollectionEntry<'wiki'>[],

@@ -11,7 +11,9 @@ Live at **[davd.fr](https://davd.fr)**.
 - **[Astro](https://astro.build)** — static site generator (ships ~0 KB of JS).
 - **Content Collections** — projects and wiki notes are Markdown files with typed,
   schema-validated frontmatter. Bad content fails the build, not the page.
-- **Hand-written CSS** with design tokens — light/dark theme, no framework.
+- **Hand-written CSS** with design tokens — light/dark theme (auto + manual
+  toggle), no framework.
+- **RSS feed** at `/rss.xml`, a social **OG image**, sitemap, and SEO metadata.
 - **GitHub Actions → GitHub Pages** — build and deploy on every push to `main`.
 
 Built spec-first with **[Spec Kit](https://github.com/github/spec-kit)**; the specs

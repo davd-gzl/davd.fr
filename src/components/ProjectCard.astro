@@ -1,0 +1,33 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  tags?: string[];
+  repo?: string;
+  url?: string;
+  featured?: boolean;
+}
+
+const { href, title, summary, tags = [], repo, url, featured = false } = Astro.props;
+---
+
+<li class="card">
+  <div class="card-meta">
+    {featured && <span class="badge-featured">★ Featured</span>}
+  </div>
+  <h3><a href={href}>{title}</a></h3>
+  <p class="card-summary">{summary}</p>
+  {
+    tags.length > 0 && (
+      <ul class="tags">
+        {tags.map((t) => <li class="tag">{t}</li>)}
+      </ul>
+    )
+  }
+  <div class="card-links">
+    <a href={href}>Read more →</a>
+    {url && <a href={url} target="_blank" rel="noopener">Live ↗</a>}
+    {repo && <a href={repo} target="_blank" rel="noopener">Code ↗</a>}
+  </div>
+</li>

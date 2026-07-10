@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { site } from '../config/site';
+import { getProjects } from '../lib/content';
+
+const projects = await getProjects();
+// Show featured on the home page; fall back to the most recent few.
+const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+const highlights = (featured.length > 0 ? featured : projects.slice(0, 3));
+---
+
+<BaseLayout>
+  <section class="container hero">
+    <p class="eyebrow">{site.headline}</p>
+    <h1>Hi, I'm {site.name}.</h1>
+    <div class="bio">
+      {site.bio.map((para) => <p>{para}</p>)}
+    </div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/projects">View projects</a>
+      <a class="btn btn-ghost" href="/wiki">Browse the wiki</a>
+      {site.email && <a class="btn btn-ghost" href={`mailto:${site.email}`}>Get in touch</a>}
+    </div>
+  </section>
+
+  {
+    highlights.length > 0 && (
+      <section class="container section">
+        <div class="section-head">
+          <h2>Selected projects</h2>
+          <a href="/projects">All projects →</a>
+        </div>
+        <ul class="card-grid">
+          {highlights.map((p) => (
+            <ProjectCard
+              href={`/projects/${p.id}`}
+              title={p.data.title}
+              summary={p.data.summary}
+              tags={p.data.tags}
+              repo={p.data.repo}
+              url={p.data.url}
+              featured={p.data.featured}
+            />
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="container section">
+    <div class="section-head">
+      <h2>Personal wiki</h2>
+      <a href="/wiki">Open the wiki →</a>
+    </div>
+    <p class="lead">
+      A living knowledge base — notes, how-tos, and references I collect as I build.
+      Everything is written in the open and grows over time.
+    </p>
+  </section>
+</BaseLayout>

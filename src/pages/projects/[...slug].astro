@@ -1,0 +1,42 @@
+---
+import { render } from 'astro:content';
+import ProseLayout from '../../layouts/ProseLayout.astro';
+import { getProjects } from '../../lib/content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, summary, tags, repo, url, date } = entry.data;
+const dateLabel = date ? date.toISOString().slice(0, 10) : undefined;
+---
+
+<ProseLayout title={title} description={summary} backHref="/projects" backLabel="Projects">
+  <div slot="meta">
+    <p class="lead" style="margin-bottom: var(--space-3)">{summary}</p>
+    <div class="article-meta">
+      {dateLabel && <time datetime={dateLabel}>{dateLabel}</time>}
+      {
+        tags.length > 0 && (
+          <ul class="tags">
+            {tags.map((t) => <li class="tag">{t}</li>)}
+          </ul>
+        )
+      }
+    </div>
+    {
+      (repo || url) && (
+        <div class="article-links">
+          {url && <a class="btn btn-primary" href={url} target="_blank" rel="noopener">Visit live ↗</a>}
+          {repo && <a class="btn btn-ghost" href={repo} target="_blank" rel="noopener">View code ↗</a>}
+        </div>
+      )
+    }
+  </div>
+
+  <Content />
+</ProseLayout>

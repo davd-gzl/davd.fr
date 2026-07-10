@@ -1,0 +1,36 @@
+---
+import { render } from 'astro:content';
+import ProseLayout from '../../layouts/ProseLayout.astro';
+import { getWikiEntries, wikiUpdated } from '../../lib/content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async () => {
+  const entries = await getWikiEntries();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, summary, category, tags, created } = entry.data;
+const createdLabel = created.toISOString().slice(0, 10);
+const updatedLabel = wikiUpdated(entry).toISOString().slice(0, 10);
+---
+
+<ProseLayout title={title} description={summary} backHref="/wiki" backLabel="Wiki">
+  <div slot="meta">
+    <div class="article-meta">
+      <span class="tag">{category}</span>
+      <time datetime={createdLabel}>Created {createdLabel}</time>
+      {updatedLabel !== createdLabel && <time datetime={updatedLabel}>Updated {updatedLabel}</time>}
+    </div>
+    {
+      tags.length > 0 && (
+        <ul class="tags" style="margin-top: var(--space-2)">
+          {tags.map((t) => <li class="tag">{t}</li>)}
+        </ul>
+      )
+    }
+  </div>
+
+  <Content />
+</ProseLayout>

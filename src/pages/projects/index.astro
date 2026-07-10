@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+---
+
+<BaseLayout
+  title="Projects"
+  description="Things I've built — tools, experiments, and shipped work."
+>
+  <div class="container section">
+    <div class="section-head">
+      <h2>Projects</h2>
+    </div>
+    <p class="lead">Things I've built — tools, experiments, and shipped work.</p>
+
+    {
+      projects.length > 0 ? (
+        <ul class="card-grid" style="margin-top: var(--space-6)">
+          {projects.map((p) => (
+            <ProjectCard
+              href={`/projects/${p.id}`}
+              title={p.data.title}
+              summary={p.data.summary}
+              tags={p.data.tags}
+              repo={p.data.repo}
+              url={p.data.url}
+              featured={p.data.featured}
+            />
+          ))}
+        </ul>
+      ) : (
+        <div class="empty-state" style="margin-top: var(--space-6)">
+          <p style="margin:0">No projects published yet — check back soon.</p>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

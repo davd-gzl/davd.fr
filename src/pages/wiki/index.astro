@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import WikiCard from '../../components/WikiCard.astro';
+import { getWikiEntries, groupByCategory, wikiUpdated } from '../../lib/content';
+
+const entries = await getWikiEntries();
+const groups = groupByCategory(entries);
+---
+
+<BaseLayout
+  title="Wiki"
+  description="My personal knowledge base — notes, how-tos, and references."
+>
+  <div class="container section">
+    <div class="section-head">
+      <h2>Wiki</h2>
+    </div>
+    <p class="lead">
+      My personal knowledge base — notes, how-tos, and references I keep for myself
+      and share in the open.
+    </p>
+
+    {
+      entries.length > 0 ? (
+        <div style="margin-top: var(--space-6)">
+          {groups.map(([category, items]) => (
+            <section class="wiki-group">
+              <h2>{category}</h2>
+              <ul class="card-grid">
+                {items.map((e) => (
+                  <WikiCard
+                    href={`/wiki/${e.id}`}
+                    title={e.data.title}
+                    summary={e.data.summary}
+                    updated={wikiUpdated(e)}
+                    tags={e.data.tags}
+                  />
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state" style="margin-top: var(--space-6)">
+          <p style="margin:0">The wiki is empty for now — notes are on their way.</p>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

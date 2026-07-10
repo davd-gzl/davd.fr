@@ -1,0 +1,28 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  updated: Date;
+  tags?: string[];
+}
+
+const { href, title, summary, updated, tags = [] } = Astro.props;
+const updatedLabel = updated.toISOString().slice(0, 10);
+---
+
+<li class="card">
+  <h3><a href={href}>{title}</a></h3>
+  <p class="card-summary">{summary}</p>
+  {
+    tags.length > 0 && (
+      <ul class="tags">
+        {tags.map((t) => <li class="tag">{t}</li>)}
+      </ul>
+    )
+  }
+  <div class="card-meta">
+    <time datetime={updatedLabel}>Updated {updatedLabel}</time>
+    <a href={href}>Open →</a>
+  </div>
+</li>

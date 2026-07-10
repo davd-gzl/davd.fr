@@ -1,0 +1,30 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Where the "back" link points and its label. */
+  backHref: string;
+  backLabel: string;
+  type?: string;
+}
+
+const { title, description, backHref, backLabel, type = 'article' } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} type={type}>
+  <div class="container section">
+    <a class="back-link" href={backHref}>← {backLabel}</a>
+    <article>
+      <header class="article-header">
+        <h1>{title}</h1>
+        <slot name="meta" />
+      </header>
+      <div class="prose">
+        <slot />
+      </div>
+      <slot name="footer" />
+    </article>
+  </div>
+</BaseLayout>

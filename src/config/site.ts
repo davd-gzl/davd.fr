@@ -25,17 +25,6 @@ export interface Line {
   blurb: string;
 }
 
-/** One stop on the journey timeline. */
-export interface Stop {
-  when: string;
-  role: string;
-  org: string;
-  place?: string;
-  line: string;
-  points: string[];
-  current?: boolean;
-}
-
 export const lines: Line[] = [
   {
     id: 'gno',
@@ -66,98 +55,13 @@ export const lines: Line[] = [
     blurb: 'Learning agentic programming, in the open.',
   },
   {
-    id: 'roots',
-    code: 'R',
-    name: 'Roots',
+    id: 'side',
+    code: 'S',
+    name: 'Side projects',
     color: 'var(--line-roots)',
-    blurb: 'Epitech, Seoul, Inria and my first web job.',
+    blurb: 'Small tools, contributions and this site.',
   },
 ];
-
-export const journey: Stop[] = [
-  {
-    when: '2025 – now',
-    role: 'Developer Relations Engineer',
-    org: 'Samourai Coop',
-    line: 'gno',
-    current: true,
-    points: [
-      'Contributor to Gno.land: +70 merged contributions and nearly 350 code reviews on the main repository.',
-      'Code across the virtual machine, network and consensus, security, governance, web explorer and developer tooling.',
-      'Documentation: installation, getting started, editor setup, local development, testing and fees.',
-      'Bug bounty triager on HackenProof for the Gno.land program.',
-    ],
-  },
-  {
-    when: '2025',
-    role: 'Junior pedagogue, internship',
-    org: 'Epitech',
-    line: 'teach',
-    points: [
-      'Mentored 1st, 2nd and 3rd year students on their projects and graded their work.',
-      'Led project kick-offs and organized the 1st and 2nd year Pools.',
-      'Built a Corewar hackathon, a Redcode VS Code extension and clang-format-epitech.',
-    ],
-  },
-  {
-    when: '2023 – 2024',
-    role: 'Student',
-    org: 'Chung-Ang University',
-    place: 'Seoul, South Korea',
-    line: 'roots',
-    points: [],
-  },
-  {
-    when: '2023',
-    role: 'OCaml library developer, internship',
-    org: 'Inria · LIP at ENS',
-    line: 'roots',
-    points: [
-      'Contributed to an OCaml library of active objects, so it can run across several machines.',
-      'Implemented an RPC module that lets a program call a function running on a remote machine.',
-    ],
-  },
-  {
-    when: '2022 – 2023',
-    role: 'Pedagogical assistant',
-    org: 'Epitech',
-    place: 'Lyon',
-    line: 'teach',
-    points: [
-      'Mentored 1st and 2nd year students through their projects and graded them.',
-      'Organized the 1st and 2nd year Pools, the intensive bootcamps that open each year.',
-    ],
-  },
-  {
-    when: '2022',
-    role: 'Full-stack web developer, internship',
-    org: 'Dafy Moto',
-    line: 'roots',
-    points: [
-      'Built a clone of dealabs.com in PHP with Symfony to learn web development.',
-      "Added features and automated tests to the company's internal tools.",
-    ],
-  },
-  {
-    when: '2020 – 2025',
-    role: "Master's degree in IT",
-    org: 'Epitech',
-    line: 'roots',
-    points: [],
-  },
-];
-
-/** The few numbers worth showing at a glance. */
-export const now = [
-  { value: '+70', label: 'merged contributions to Gno.land' },
-  { value: '~350', label: 'code reviews on Gno.land' },
-  { value: 'Triager', label: 'on HackenProof for the Gno.land bug bounty' },
-];
-
-export const interests = {
-  code: ['P2P', 'low-level programming', 'optimization', 'security', 'agentic programming'],
-  life: ['travelling', 'urbanism', 'transportation'],
-};
 
 export const site = {
   siteUrl: 'https://davd.fr',
@@ -168,10 +72,6 @@ export const site = {
 
   headline: 'Developer Relations Engineer at Samourai Coop · contributor to Gno.land',
 
-  bio: [
-    "I'm David, Developer Relations Engineer at Samourai Coop and contributor to Gno.land, a blockchain built on an interpreted Go virtual machine.",
-    "I'm drawn to P2P, low-level programming, optimization and security, and I'm learning agentic programming. On the side I build Offware, apps that keep working switched off.",
-  ],
 
   location: 'France',
 
@@ -179,7 +79,6 @@ export const site = {
 
   nav: [
     { label: 'Home', href: '/' },
-    { label: 'Experience', href: '/#experience' },
     { label: 'Projects', href: '/projects' },
     { label: 'Wiki', href: 'https://davd-gzl.github.io/personal-wiki/' },
   ] satisfies NavItem[],
@@ -192,7 +91,7 @@ export const site = {
   ] satisfies SocialLink[],
 
   description:
-    'David Gozlan, Developer Relations Engineer at Samourai Coop and contributor to Gno.land. Projects, experience and what I like.',
+    'David Gozlan, Developer Relations Engineer at Samourai Coop and contributor to Gno.land. Projects and what I am working on.',
 } as const;
 
 export type Site = typeof site;

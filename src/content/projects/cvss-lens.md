@@ -6,6 +6,7 @@ repo: "https://github.com/davd-gzl/cvss-lens"
 url: "https://davd-gzl.github.io/cvss-lens/"
 date: 2026-09-10
 featured: false
+line: "side"
 ---
 
 A small security tool: paste a CVSS vector and read what each

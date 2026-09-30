@@ -1,148 +1,137 @@
 ---
-// The home page's signature: my work drawn as a metro network. Each line is a
-// theme, each station a thing I did, and every line meets at one interchange.
+// Every project as a station on a metro map. Each theme is a line leaving the
+// same hub, and its projects sit evenly along it, so a new Markdown file adds a
+// station with no change here.
 import { lines } from '../config/site';
+import { getProjects } from '../lib/content';
 
-interface Station {
-  x: number;
-  y: number;
-  label: string;
-  href: string;
-  /** Label offset from the station, and which side it anchors on. */
-  dx: number;
-  dy: number;
-  anchor?: 'start' | 'middle' | 'end';
+type Pt = [number, number];
+
+const hub: Pt = [450, 260];
+
+// Each line leaves the hub with one short bend, then runs straight; its
+// stations spread along that straight run, where labels have room.
+const tracks: Record<string, string> = {
+  gno: 'M450 260 L510 200 H900',
+  offware: 'M450 260 L520 330 H900',
+  teach: 'M450 260 L390 200 H20',
+  side: 'M450 260 L380 330 H20',
+  agents: 'M450 260 V150 L480 120 V10',
+};
+
+/** The corner points of a track written with M, H, V and L only. */
+function corners(d: string): Pt[] {
+  const pts: Pt[] = [];
+  let [x, y] = [0, 0];
+  for (const [, op, args] of d.matchAll(/([MHVL])([^MHVL]*)/g)) {
+    const n = args.trim().split(/[\s,]+/).map(Number);
+    if (op === 'H') x = n[0];
+    else if (op === 'V') y = n[0];
+    else [x, y] = n;
+    pts.push([x, y]);
+  }
+  return pts;
 }
 
-interface Route {
-  line: string;
-  d: string;
-  dur: string;
-  stations: Station[];
-}
+const projects = await getProjects();
 
-const hub = { x: 450, y: 260 };
-
-const routes: Route[] = [
-  {
-    line: 'gno',
-    d: 'M60 260 H640 L760 140 H870',
-    dur: '14s',
-    stations: [
-      { x: 130, y: 260, label: 'GnoVM', href: '/projects/gno-land', dx: 0, dy: -18, anchor: 'middle' },
-      { x: 270, y: 260, label: 'Consensus', href: '/projects/gno-land', dx: 0, dy: -18, anchor: 'middle' },
-      { x: 580, y: 260, label: 'Security', href: '/projects/gno-land', dx: 0, dy: 30, anchor: 'middle' },
-      { x: 700, y: 200, label: 'GovDAO', href: '/projects/gno-land', dx: 14, dy: 22, anchor: 'start' },
-      { x: 830, y: 140, label: 'Docs', href: '/projects/gno-land', dx: 0, dy: -18, anchor: 'middle' },
-    ],
-  },
-  {
-    line: 'teach',
-    d: 'M300 40 L450 190 V380 L560 490',
-    dur: '12s',
-    stations: [
-      { x: 330, y: 70, label: 'Pools', href: '/#experience', dx: -16, dy: 5, anchor: 'end' },
-      { x: 400, y: 140, label: 'Kick-offs', href: '/#experience', dx: -16, dy: 5, anchor: 'end' },
-      { x: 450, y: 360, label: 'Peer Dev', href: '/projects/peer-dev', dx: 16, dy: 5, anchor: 'start' },
-      { x: 530, y: 460, label: 'Corewar', href: '/projects/corewar-hackathon', dx: 16, dy: 5, anchor: 'start' },
-    ],
-  },
-  {
-    line: 'offware',
-    d: 'M450 260 L350 360 H80',
-    dur: '9s',
-    stations: [
-      { x: 250, y: 360, label: 'MAX-Finder', href: '/projects/max-finder', dx: 0, dy: 30, anchor: 'middle' },
-      { x: 120, y: 360, label: 'Postcards', href: '/projects/postcards', dx: 0, dy: 30, anchor: 'middle' },
-    ],
-  },
-  {
-    line: 'agents',
-    d: 'M450 260 L540 170 V60 H720',
-    dur: '10s',
-    stations: [
-      { x: 540, y: 115, label: 'Skills', href: '/projects/agent-skills', dx: 16, dy: 5, anchor: 'start' },
-      { x: 670, y: 60, label: 'Prompt2PR', href: '/projects/prompt2pr', dx: 0, dy: -18, anchor: 'middle' },
-    ],
-  },
-  {
-    line: 'roots',
-    d: 'M450 260 L520 330 H870',
-    dur: '11s',
-    stations: [
-      { x: 590, y: 330, label: 'Epitech', href: '/#experience', dx: 0, dy: 30, anchor: 'middle' },
-      { x: 680, y: 330, label: 'Dafy Moto', href: '/#experience', dx: 0, dy: -18, anchor: 'middle' },
-      { x: 770, y: 330, label: 'Inria', href: '/#experience', dx: 0, dy: 30, anchor: 'middle' },
-      { x: 850, y: 330, label: 'Seoul', href: '/#experience', dx: 0, dy: -18, anchor: 'middle' },
-    ],
-  },
-];
-
-const colorOf = (id: string) => lines.find((l) => l.id === id)?.color ?? 'var(--text)';
+const routes = lines.map((l) => {
+  const d = tracks[l.id];
+  const mine = projects.filter((p) => p.data.line === l.id);
+  const pts = corners(d);
+  const [a, b] = pts.slice(-2);
+  const horizontal = a[1] === b[1];
+  const stations = mine.map((p, i) => {
+    // Evenly along the straight run, clear of the bend at its start.
+    const t = ((i + 0.6) / mine.length) * 0.92;
+    const x = a[0] + (b[0] - a[0]) * t;
+    const y = a[1] + (b[1] - a[1]) * t;
+    // Labels alternate sides of the track, so neighbours never touch.
+    const up = i % 2 === 0;
+    const label = horizontal
+      ? { x, y: y + (up ? -20 : 32), anchor: 'middle' }
+      : { x: x + (up ? 18 : -18), y: y + 6, anchor: up ? 'start' : 'end' };
+    return { id: p.id, title: p.data.title, summary: p.data.summary, x, y, label };
+  });
+  return { line: l, d, stations };
+});
 ---
 
 <figure class="metro">
-  <svg
-    viewBox="0 0 920 520"
-    role="img"
-    aria-labelledby="metro-title"
-    class="metro-svg"
-  >
+  <svg viewBox="0 0 920 380" role="img" aria-labelledby="metro-title" class="metro-svg">
     <title id="metro-title">
-      A metro map of my work: the Gno.land, Teaching, Offware, Agents and Roots lines, meeting at one interchange.
+      A metro map of my projects: one line per theme, one station per project.
     </title>
 
     <g class="metro-grid" aria-hidden="true">
       {Array.from({ length: 12 }, (_, i) => (
-        <line x1={i * 80 + 20} y1="0" x2={i * 80 + 20} y2="520" />
+        <line x1={i * 80 + 20} y1="0" x2={i * 80 + 20} y2="380" />
       ))}
-      {Array.from({ length: 7 }, (_, i) => (
+      {Array.from({ length: 5 }, (_, i) => (
         <line x1="0" y1={i * 80 + 20} x2="920" y2={i * 80 + 20} />
       ))}
     </g>
 
     {routes.map((r) => (
-      <g class={`route route-${r.line}`} style={`--c:${colorOf(r.line)}`}>
+      <g class={`route route-${r.line.id}`} style={`--c:${r.line.color}`}>
         <path class="route-casing" d={r.d} />
-        <path class="route-path" d={r.d} id={`path-${r.line}`} />
+        <path class="route-path" d={r.d} id={`path-${r.line.id}`} />
         <circle class="train" r="6">
-          <animateMotion dur={r.dur} repeatCount="indefinite" rotate="auto">
-            <mpath href={`#path-${r.line}`} />
+          <animateMotion dur="12s" repeatCount="indefinite" rotate="auto">
+            <mpath href={`#path-${r.line.id}`} />
           </animateMotion>
         </circle>
-        {r.stations.map((s) => (
-          <a href={s.href} class="station">
-            <circle cx={s.x} cy={s.y} r="9" />
-            <text
-              class="map-label"
-              x={s.x + s.dx}
-              y={s.y + s.dy}
-              text-anchor={s.anchor ?? 'start'}
-            >
-              {s.label}
-            </text>
-          </a>
-        ))}
       </g>
     ))}
 
-    <a href="/#experience" class="hub">
-      <rect x={hub.x - 34} y={hub.y - 22} width="68" height="44" rx="22" />
-      <text x={hub.x} y={hub.y + 6} text-anchor="middle">davd</text>
-    </a>
+    {routes.map((r) =>
+      r.stations.map((s) => (
+        <a
+          href={`/projects/${s.id}`}
+          class="station"
+          style={`--c:${r.line.color}`}
+          data-title={s.title}
+          data-summary={s.summary}
+          data-line={r.line.name}
+        >
+          <title>{s.title}: {s.summary}</title>
+          <circle cx={s.x} cy={s.y} r="9" />
+          <text class="map-label" x={s.label.x} y={s.label.y} text-anchor={s.label.anchor}>
+            {s.title}
+          </text>
+        </a>
+      ))
+    )}
+
+    <g class="hub" aria-hidden="true">
+      <rect x={hub[0] - 34} y={hub[1] - 22} width="68" height="44" rx="22" />
+      <text x={hub[0]} y={hub[1] + 6} text-anchor="middle">davd</text>
+    </g>
   </svg>
 
-  <figcaption>
-    <ul class="metro-legend">
-      {lines.map((l) => (
-        <li style={`--c:${l.color}`}>
-          <span class="roundel" aria-hidden="true">{l.code}</span>
-          <span>
-            <strong>{l.name}</strong>
-            <span class="legend-blurb">{l.blurb}</span>
-          </span>
-        </li>
-      ))}
-    </ul>
+  <figcaption class="map-panel" data-panel aria-live="polite">
+    <p class="map-panel-line" data-panel-line>{projects.length} projects on {lines.length} lines</p>
+    <p class="map-panel-title" data-panel-title>Pick a station to see the project.</p>
+    <p class="map-panel-summary" data-panel-summary></p>
   </figcaption>
 </figure>
+
+<script is:inline>
+  (function () {
+    var panel = document.querySelector('[data-panel]');
+    if (!panel) return;
+    var line = panel.querySelector('[data-panel-line]');
+    var title = panel.querySelector('[data-panel-title]');
+    var summary = panel.querySelector('[data-panel-summary]');
+    function show(st) {
+      panel.style.setProperty('--c', st.style.getPropertyValue('--c'));
+      line.textContent = st.dataset.line;
+      title.textContent = st.dataset.title;
+      summary.textContent = st.dataset.summary;
+    }
+    document.querySelectorAll('.station').forEach(function (st) {
+      st.addEventListener('mouseenter', function () { show(st); });
+      st.addEventListener('focus', function () { show(st); });
+    });
+  })();
+</script>

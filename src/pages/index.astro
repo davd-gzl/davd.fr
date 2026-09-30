@@ -2,17 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import MetroMap from '../components/MetroMap.astro';
-import Journey from '../components/Journey.astro';
 import NetworkBackground from '../components/NetworkBackground.astro';
-import { site, now, interests } from '../config/site';
+import { site, lines } from '../config/site';
 import { getProjects } from '../lib/content';
 
 const projects = await getProjects();
-const featured = projects.filter((p) => p.data.featured).slice(0, 6);
-
-/** "a, b and c", keeping each item as written. */
-const join = (items: readonly string[]) =>
-  items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}` : items[0];
+const groups = lines
+  .map((l) => ({ line: l, items: projects.filter((p) => p.data.line === l.id) }))
+  .filter((g) => g.items.length > 0);
 ---
 
 <BaseLayout>
@@ -20,9 +17,6 @@ const join = (items: readonly string[]) =>
 
   <section class="container hero">
     <h1>Hi, I'm {site.firstName}.</h1>
-    <div class="bio">
-      {site.bio.map((para) => <p>{para}</p>)}
-    </div>
     <p class="hero-links">
       {site.socials.map((s, i) => (
         <Fragment>
@@ -39,55 +33,27 @@ const join = (items: readonly string[]) =>
     </p>
   </section>
 
-  <section class="container section map-section" aria-label="Map of my work">
+  <section class="container section map-section" aria-label="Map of my projects">
     <MetroMap />
   </section>
 
-  <section class="container section" aria-labelledby="now-title">
-    <h2 id="now-title">Now</h2>
-    <ul class="now">
-      {now.map((n) => (
-        <li>
-          <span class="now-value">{n.value}</span>
-          <span class="now-label">{n.label}</span>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <section class="container section" id="experience">
-    <h2>Experience</h2>
-    <Journey />
-  </section>
-
-  <section class="container section">
-    <div class="section-head">
-      <h2>Projects</h2>
-      <a href="/projects">See all</a>
-    </div>
-    <ul class="card-grid">
-      {featured.map((p) => (
-        <ProjectCard
-          href={`/projects/${p.id}`}
-          title={p.data.title}
-          summary={p.data.summary}
-          tags={p.data.tags}
-          repo={p.data.repo}
-          url={p.data.url}
-          line={p.data.line}
-        />
-      ))}
-    </ul>
-  </section>
-
-  <section class="container section likes" aria-labelledby="likes-title">
-    <h2 id="likes-title">What I like</h2>
-    <p>
-      In code: {join(interests.code)}. Outside of it: {join(interests.life)}.
-    </p>
-    <p>
-      I'm a curious person who wants to contribute to the greater good, and I'm
-      open to contributing to new projects.
-    </p>
-  </section>
+  {groups.map((g) => (
+    <section class="container section line-group" style={`--c:${g.line.color}`} id={g.line.id}>
+      <h2><span class="roundel" aria-hidden="true">{g.line.code}</span>{g.line.name}</h2>
+      <p class="line-blurb">{g.line.blurb}</p>
+      <ul class="card-grid">
+        {g.items.map((p) => (
+          <ProjectCard
+            href={`/projects/${p.id}`}
+            title={p.data.title}
+            summary={p.data.summary}
+            tags={p.data.tags}
+            repo={p.data.repo}
+            url={p.data.url}
+            line={p.data.line}
+          />
+        ))}
+      </ul>
+    </section>
+  ))}
 </BaseLayout>

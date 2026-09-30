@@ -794,7 +794,7 @@ h2 {
 .route-teach .route-path { animation-delay: 0.15s; }
 .route-offware .route-path { animation-delay: 0.3s; }
 .route-agents .route-path { animation-delay: 0.45s; }
-.route-roots .route-path { animation-delay: 0.6s; }
+.route-side .route-path { animation-delay: 0.6s; }
 @keyframes draw {
   to {
     stroke-dashoffset: 0;
@@ -856,27 +856,6 @@ h2 {
   font-size: 0.8rem;
   line-height: 1;
 }
-.metro-legend {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
-  gap: var(--space-3);
-  list-style: none;
-  margin: var(--space-4) 0 0;
-  padding: var(--space-4) 0 0;
-  border-top: 1px solid var(--border);
-}
-.metro-legend li {
-  display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
-  font-size: var(--text-sm);
-  line-height: 1.4;
-}
-.legend-blurb {
-  display: block;
-  color: var(--text-muted);
-  font-size: var(--text-xs);
-}
 @media (max-width: 640px) {
   .map-label {
     display: none;
@@ -895,95 +874,44 @@ h2 {
   }
 }
 
-/* Now: three numbers, no chrome */
-.now {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  gap: var(--space-5);
-  list-style: none;
+/* Map panel: the project under the pointer */
+.map-panel {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  min-height: 5.5rem;
+}
+.map-panel p {
   margin: 0;
-  padding: 0;
 }
-.now li {
-  border-top: 2px solid var(--text);
-  padding-top: var(--space-3);
+.map-panel-line {
+  color: var(--c, var(--text-muted));
+  font-size: var(--text-sm);
+  font-weight: 600;
 }
-.now-value {
-  display: block;
+.map-panel-title {
   font-family: var(--font-serif);
-  font-size: var(--text-2xl);
+  font-size: var(--text-xl);
   font-weight: 600;
 }
-.now-label {
+.map-panel-summary {
   color: var(--text-muted);
-}
-
-/* Experience */
-.journey {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.stop {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1rem 1fr;
-  gap: var(--space-4);
-  padding-bottom: var(--space-6);
-}
-.stop::before {
-  content: "";
-  position: absolute;
-  left: calc(0.5rem - 1px);
-  top: 1.1rem;
-  bottom: 0;
-  width: 2px;
-  background: var(--border);
-}
-.stop:last-child::before {
-  display: none;
-}
-.stop-dot {
-  position: relative;
-  z-index: 1;
-  width: 1rem;
-  height: 1rem;
-  margin-top: 0.3rem;
-  border-radius: 50%;
-  background: var(--bg);
-  border: 3px solid var(--c);
-}
-.stop.current .stop-dot {
-  background: var(--c);
-}
-.stop-when {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  margin: 0;
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-}
-.current-tag {
-  color: var(--c);
-  font-weight: 600;
-}
-.stop-body h3 {
-  margin: var(--space-1) 0 0;
-  font-size: var(--text-lg);
-}
-.stop-org {
-  color: var(--text-muted);
-  margin: 0 0 var(--space-2);
-}
-.stop-body ul {
-  margin: 0;
-  padding-left: 1.1rem;
-  font-size: var(--text-sm);
   max-width: var(--container-prose);
 }
-.stop-body li + li {
-  margin-top: var(--space-1);
+.station {
+  cursor: pointer;
+}
+
+/* One section per line */
+.line-group h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+.line-blurb {
+  color: var(--text-muted);
+  margin: 0 0 var(--space-5);
 }
 
 /* Project cards: a coloured edge, no lift */
@@ -1016,12 +944,6 @@ h2 {
 }
 .card h3 a:hover {
   color: var(--c, var(--accent));
-}
-
-/* What I like */
-.likes p {
-  max-width: var(--container-prose);
-  font-size: var(--text-lg);
 }
 
 @media (max-width: 480px) {

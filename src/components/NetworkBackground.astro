@@ -1,0 +1,137 @@
+---
+// A peer-to-peer network turning in 3D behind the page: nodes on a
+// sphere, each linked to its nearest peers. Plain canvas, no library.
+---
+
+<canvas class="net-bg" aria-hidden="true"></canvas>
+
+<script is:inline>
+  (function () {
+    var canvas = document.querySelector('.net-bg');
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Points spread evenly over a sphere (Fibonacci lattice).
+    var N = 90;
+    var nodes = [];
+    var golden = Math.PI * (3 - Math.sqrt(5));
+    for (var i = 0; i < N; i++) {
+      var y = 1 - (i / (N - 1)) * 2;
+      var r = Math.sqrt(1 - y * y);
+      var t = golden * i;
+      nodes.push([Math.cos(t) * r, y, Math.sin(t) * r]);
+    }
+
+    // Link each node to its three nearest peers, once per pair.
+    var links = [];
+    var seen = {};
+    nodes.forEach(function (a, i) {
+      nodes
+        .map(function (b, j) {
+          var dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
+          return { j: j, d: dx * dx + dy * dy + dz * dz };
+        })
+        .filter(function (o) { return o.j !== i; })
+        .sort(function (p, q) { return p.d - q.d; })
+        .slice(0, 3)
+        .forEach(function (o) {
+          var key = Math.min(i, o.j) + '-' + Math.max(i, o.j);
+          if (!seen[key]) { seen[key] = 1; links.push([i, o.j]); }
+        });
+    });
+
+    var palette = ['--line-gno', '--line-teach', '--line-offware', '--line-agents', '--line-roots'];
+    var colors = [];
+    var ink = '#000';
+    function readColors() {
+      var cs = getComputedStyle(document.documentElement);
+      colors = palette.map(function (p) { return cs.getPropertyValue(p).trim() || '#888'; });
+      ink = cs.getPropertyValue('--text-muted').trim() || '#888';
+    }
+
+    var w = 0, h = 0, dpr = 1;
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    var angle = 0.6;
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      var radius = Math.min(Math.max(w, h) * 0.36, 520);
+      // On a phone the text fills the width, so the sphere drops low and fades.
+      var narrow = w < 700;
+      var cx = narrow ? w * 0.8 : w * 0.78, cy = narrow ? h * 0.78 : h * 0.38;
+      var fade = narrow ? 0.5 : 1;
+      var ca = Math.cos(angle), sa = Math.sin(angle);
+      var tilt = 0.38, ct = Math.cos(tilt), st = Math.sin(tilt);
+
+      // Rotate around the vertical axis, tilt towards the viewer, then project.
+      var pts = nodes.map(function (n) {
+        var x = n[0] * ca - n[2] * sa;
+        var z = n[0] * sa + n[2] * ca;
+        var y = n[1] * ct - z * st;
+        z = n[1] * st + z * ct;
+        var s = 2.4 / (2.4 + z);
+        return { x: cx + x * radius * s, y: cy + y * radius * s, z: z, s: s };
+      });
+
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = ink;
+      links.forEach(function (l) {
+        var a = pts[l[0]], b = pts[l[1]];
+        ctx.globalAlpha = fade * (0.08 + 0.3 * (1 - (a.z + b.z + 2) / 4));
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+
+      pts.forEach(function (p, i) {
+        ctx.globalAlpha = fade * (0.25 + 0.6 * (1 - (p.z + 1) / 2));
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.4 * p.s, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    var running = false;
+    function loop() {
+      if (!running) return;
+      angle += 0.002;
+      frame();
+      requestAnimationFrame(loop);
+    }
+    function start() {
+      if (still || running) return;
+      running = true;
+      requestAnimationFrame(loop);
+    }
+
+    readColors();
+    resize();
+    frame();
+    start();
+    window.addEventListener('resize', function () { resize(); frame(); });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) running = false;
+      else start();
+    });
+    // The theme toggle changes the palette, so re-read it when the attribute moves.
+    new MutationObserver(function () { readColors(); frame(); }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+      readColors();
+      frame();
+    });
+  })();
+</script>

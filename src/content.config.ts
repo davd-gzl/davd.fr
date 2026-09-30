@@ -15,6 +15,8 @@ const projects = defineCollection({
     url: z.url().optional(),
     date: z.coerce.date().optional(),
     featured: z.boolean().default(false),
+    /** Id of a metro line in src/config/site.ts, which sets the card colour. */
+    line: z.string().optional(),
     cover: z.string().optional(),
     draft: z.boolean().default(false),
   }),

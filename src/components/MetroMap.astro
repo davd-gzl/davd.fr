@@ -1,0 +1,148 @@
+---
+// The home page's signature: my work drawn as a metro network. Each line is a
+// theme, each station a thing I did, and every line meets at one interchange.
+import { lines } from '../config/site';
+
+interface Station {
+  x: number;
+  y: number;
+  label: string;
+  href: string;
+  /** Label offset from the station, and which side it anchors on. */
+  dx: number;
+  dy: number;
+  anchor?: 'start' | 'middle' | 'end';
+}
+
+interface Route {
+  line: string;
+  d: string;
+  dur: string;
+  stations: Station[];
+}
+
+const hub = { x: 450, y: 260 };
+
+const routes: Route[] = [
+  {
+    line: 'gno',
+    d: 'M60 260 H640 L760 140 H870',
+    dur: '14s',
+    stations: [
+      { x: 130, y: 260, label: 'GnoVM', href: '/projects/gno-land', dx: 0, dy: -18, anchor: 'middle' },
+      { x: 270, y: 260, label: 'Consensus', href: '/projects/gno-land', dx: 0, dy: -18, anchor: 'middle' },
+      { x: 580, y: 260, label: 'Security', href: '/projects/gno-land', dx: 0, dy: 30, anchor: 'middle' },
+      { x: 700, y: 200, label: 'GovDAO', href: '/projects/gno-land', dx: 14, dy: 22, anchor: 'start' },
+      { x: 830, y: 140, label: 'Docs', href: '/projects/gno-land', dx: 0, dy: -18, anchor: 'middle' },
+    ],
+  },
+  {
+    line: 'teach',
+    d: 'M300 40 L450 190 V380 L560 490',
+    dur: '12s',
+    stations: [
+      { x: 330, y: 70, label: 'Pools', href: '/#experience', dx: -16, dy: 5, anchor: 'end' },
+      { x: 400, y: 140, label: 'Kick-offs', href: '/#experience', dx: -16, dy: 5, anchor: 'end' },
+      { x: 450, y: 360, label: 'Peer Dev', href: '/projects/peer-dev', dx: 16, dy: 5, anchor: 'start' },
+      { x: 530, y: 460, label: 'Corewar', href: '/projects/corewar-hackathon', dx: 16, dy: 5, anchor: 'start' },
+    ],
+  },
+  {
+    line: 'offware',
+    d: 'M450 260 L350 360 H80',
+    dur: '9s',
+    stations: [
+      { x: 250, y: 360, label: 'MAX-Finder', href: '/projects/max-finder', dx: 0, dy: 30, anchor: 'middle' },
+      { x: 120, y: 360, label: 'Postcards', href: '/projects/postcards', dx: 0, dy: 30, anchor: 'middle' },
+    ],
+  },
+  {
+    line: 'agents',
+    d: 'M450 260 L540 170 V60 H720',
+    dur: '10s',
+    stations: [
+      { x: 540, y: 115, label: 'Skills', href: '/projects/agent-skills', dx: 16, dy: 5, anchor: 'start' },
+      { x: 670, y: 60, label: 'Prompt2PR', href: '/projects/prompt2pr', dx: 0, dy: -18, anchor: 'middle' },
+    ],
+  },
+  {
+    line: 'roots',
+    d: 'M450 260 L520 330 H870',
+    dur: '11s',
+    stations: [
+      { x: 590, y: 330, label: 'Epitech', href: '/#experience', dx: 0, dy: 30, anchor: 'middle' },
+      { x: 680, y: 330, label: 'Dafy Moto', href: '/#experience', dx: 0, dy: -18, anchor: 'middle' },
+      { x: 770, y: 330, label: 'Inria', href: '/#experience', dx: 0, dy: 30, anchor: 'middle' },
+      { x: 850, y: 330, label: 'Seoul', href: '/#experience', dx: 0, dy: -18, anchor: 'middle' },
+    ],
+  },
+];
+
+const colorOf = (id: string) => lines.find((l) => l.id === id)?.color ?? 'var(--text)';
+---
+
+<figure class="metro">
+  <svg
+    viewBox="0 0 920 520"
+    role="img"
+    aria-labelledby="metro-title"
+    class="metro-svg"
+  >
+    <title id="metro-title">
+      A metro map of my work: the Gno.land, Teaching, Offware, Agents and Roots lines, meeting at one interchange.
+    </title>
+
+    <g class="metro-grid" aria-hidden="true">
+      {Array.from({ length: 12 }, (_, i) => (
+        <line x1={i * 80 + 20} y1="0" x2={i * 80 + 20} y2="520" />
+      ))}
+      {Array.from({ length: 7 }, (_, i) => (
+        <line x1="0" y1={i * 80 + 20} x2="920" y2={i * 80 + 20} />
+      ))}
+    </g>
+
+    {routes.map((r) => (
+      <g class={`route route-${r.line}`} style={`--c:${colorOf(r.line)}`}>
+        <path class="route-casing" d={r.d} />
+        <path class="route-path" d={r.d} id={`path-${r.line}`} />
+        <circle class="train" r="6">
+          <animateMotion dur={r.dur} repeatCount="indefinite" rotate="auto">
+            <mpath href={`#path-${r.line}`} />
+          </animateMotion>
+        </circle>
+        {r.stations.map((s) => (
+          <a href={s.href} class="station">
+            <circle cx={s.x} cy={s.y} r="9" />
+            <text
+              class="map-label"
+              x={s.x + s.dx}
+              y={s.y + s.dy}
+              text-anchor={s.anchor ?? 'start'}
+            >
+              {s.label}
+            </text>
+          </a>
+        ))}
+      </g>
+    ))}
+
+    <a href="/#experience" class="hub">
+      <rect x={hub.x - 34} y={hub.y - 22} width="68" height="44" rx="22" />
+      <text x={hub.x} y={hub.y + 6} text-anchor="middle">davd</text>
+    </a>
+  </svg>
+
+  <figcaption>
+    <ul class="metro-legend">
+      {lines.map((l) => (
+        <li style={`--c:${l.color}`}>
+          <span class="roundel" aria-hidden="true">{l.code}</span>
+          <span>
+            <strong>{l.name}</strong>
+            <span class="legend-blurb">{l.blurb}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  </figcaption>
+</figure>

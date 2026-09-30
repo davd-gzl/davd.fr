@@ -1,4 +1,7 @@
 ---
+// A project card, edged in the colour of its theme.
+import { lines } from '../config/site';
+
 interface Props {
   href: string;
   title: string;
@@ -7,15 +10,15 @@ interface Props {
   repo?: string;
   url?: string;
   featured?: boolean;
+  line?: string;
 }
 
-const { href, title, summary, tags = [], repo, url, featured = false } = Astro.props;
+const { href, title, summary, tags = [], repo, url, line } = Astro.props;
+const l = lines.find((x) => x.id === line);
 ---
 
-<li class="card">
-  <div class="card-meta">
-    {featured && <span class="badge-featured">★ Featured</span>}
-  </div>
+<li class="card project-card" style={`--c:${l?.color ?? 'var(--text-muted)'}`}>
+  <p class="card-kind"><span class="kind-dot" aria-hidden="true"></span>{l?.name ?? 'Other'}</p>
   <h3><a href={href}>{title}</a></h3>
   <p class="card-summary">{summary}</p>
   {
@@ -26,7 +29,7 @@ const { href, title, summary, tags = [], repo, url, featured = false } = Astro.p
     )
   }
   <div class="card-links">
-    <a href={href}>Read more →</a>
+    <a href={href}>Details →</a>
     {url && <a href={url} target="_blank" rel="noopener">Live ↗</a>}
     {repo && <a href={repo} target="_blank" rel="noopener">Code ↗</a>}
   </div>

@@ -4,6 +4,7 @@ summary: "How to validate Markdown frontmatter at build time so bad content fail
 category: "Development"
 tags: ["astro", "typescript", "zod", "content"]
 created: 2026-06-28
+draft: true
 ---
 
 Astro's Content Collections let you treat a folder of Markdown as typed data. The win:

@@ -9,15 +9,15 @@ const groups = groupByCategory(entries);
 
 <BaseLayout
   title="Wiki"
-  description="My personal knowledge base — notes, how-tos, and references."
+  description="My notes and links on what I am learning."
 >
   <div class="container section">
     <div class="section-head">
       <h2>Wiki</h2>
     </div>
     <p class="lead">
-      My personal knowledge base — notes, how-tos, and references I keep for myself
-      and share in the open.
+      My notes and links on what I am learning live in my
+      <a href="https://davd-gzl.github.io/personal-wiki/">personal wiki</a>.
     </p>
 
     {
@@ -42,7 +42,7 @@ const groups = groupByCategory(entries);
         </div>
       ) : (
         <div class="empty-state" style="margin-top: var(--space-6)">
-          <p style="margin:0">The wiki is empty for now — notes are on their way.</p>
+          <p style="margin:0"><a href="https://davd-gzl.github.io/personal-wiki/">Open the personal wiki</a></p>
         </div>
       )
     }

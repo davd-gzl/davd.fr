@@ -1,0 +1,32 @@
+---
+// The experience timeline, newest first, each entry coloured by its theme.
+import { journey, lines } from '../config/site';
+
+const lineOf = (id: string) => lines.find((l) => l.id === id);
+---
+
+<ol class="journey">
+  {journey.map((stop) => {
+    const l = lineOf(stop.line);
+    return (
+      <li class:list={['stop', { current: stop.current }]} style={`--c:${l?.color}`}>
+        <span class="stop-dot" aria-hidden="true"></span>
+        <div class="stop-body">
+          <p class="stop-when">
+            {stop.when}
+            {stop.current && <span class="current-tag">Current</span>}
+          </p>
+          <h3>{stop.role}</h3>
+          <p class="stop-org">
+            {stop.org}{stop.place && ` · ${stop.place}`}
+          </p>
+          {stop.points.length > 0 && (
+            <ul>
+              {stop.points.map((p) => <li>{p}</li>)}
+            </ul>
+          )}
+        </div>
+      </li>
+    );
+  })}
+</ol>

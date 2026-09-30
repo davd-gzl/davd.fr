@@ -26,7 +26,7 @@ export async function GET(context) {
   ].sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
 
   return rss({
-    title: `${site.name} — ${site.shortName}.fr`,
+    title: `${site.name} · ${site.shortName}.fr`,
     description: site.description,
     site: context.site,
     items,

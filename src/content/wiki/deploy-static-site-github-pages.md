@@ -5,6 +5,7 @@ category: "DevOps"
 tags: ["github-pages", "ci", "github-actions", "dns"]
 created: 2026-06-20
 updated: 2026-07-10
+draft: true
 ---
 
 GitHub Pages is a free, CDN-backed host for static sites, and it supports custom

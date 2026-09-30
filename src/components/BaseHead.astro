@@ -17,7 +17,7 @@ const {
   type = 'website',
 } = Astro.props;
 
-const pageTitle = title ? `${title} · ${site.shortName}.fr` : `${site.name} — ${site.headline}`;
+const pageTitle = title ? `${title} · ${site.shortName}.fr` : `${site.name} · ${site.headline}`;
 const canonical = new URL(Astro.url.pathname, site.siteUrl).href;
 // Every page gets a social share image; pages may override with their own.
 const ogImage = new URL(image ?? '/og.png', site.siteUrl).href;
@@ -34,11 +34,11 @@ const ogImage = new URL(image ?? '/og.png', site.siteUrl).href;
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
-<link rel="alternate" type="application/rss+xml" title={`${site.name} — ${site.shortName}.fr`} href="/rss.xml" />
+<link rel="alternate" type="application/rss+xml" title={`${site.name} · ${site.shortName}.fr`} href="/rss.xml" />
 
 <!-- Open Graph -->
 <meta property="og:type" content={type} />
-<meta property="og:site_name" content={`${site.name} — ${site.shortName}.fr`} />
+<meta property="og:site_name" content={`${site.name} · ${site.shortName}.fr`} />
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />

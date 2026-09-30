@@ -5,6 +5,7 @@ category: "Meta"
 tags: ["astro", "static-site", "architecture"]
 created: 2026-07-10
 updated: 2026-07-10
+draft: true
 ---
 
 This site is deliberately boring in the best way: a static site generator, Markdown

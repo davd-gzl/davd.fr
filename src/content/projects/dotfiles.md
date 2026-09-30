@@ -4,7 +4,8 @@ summary: "My portable development environment — shell, editor, and tooling con
 tags: ["shell", "automation", "tooling"]
 repo: "https://github.com/davd-gzl/dotfiles"
 date: 2026-03-01
-featured: true
+featured: false
+draft: true
 ---
 
 > Starter entry — replace with your real project, or delete the file.

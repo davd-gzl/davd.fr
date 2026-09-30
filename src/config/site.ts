@@ -1,14 +1,12 @@
 // ============================================================================
 //  WHO I AM  —  edit this file to personalize the whole site.
 //  The home page, header, footer, and page metadata all read from here.
-//  Changing text here needs no other code changes.
 // ============================================================================
 
 export interface SocialLink {
   label: string;
   href: string;
-  /** Inline SVG path data (24x24 viewBox) or emoji fallback handled in Footer. */
-  icon: 'github' | 'email' | 'link';
+  icon: 'github' | 'email' | 'link' | 'linkedin' | 'youtube';
 }
 
 export interface NavItem {
@@ -16,55 +14,185 @@ export interface NavItem {
   href: string;
 }
 
+/** A metro line: one theme of my work, drawn in its own colour. */
+export interface Line {
+  id: string;
+  /** The letter shown in the line's roundel. */
+  code: string;
+  name: string;
+  /** CSS custom property holding the line colour. */
+  color: string;
+  blurb: string;
+}
+
+/** One stop on the journey timeline. */
+export interface Stop {
+  when: string;
+  role: string;
+  org: string;
+  place?: string;
+  line: string;
+  points: string[];
+  current?: boolean;
+}
+
+export const lines: Line[] = [
+  {
+    id: 'gno',
+    code: 'G',
+    name: 'Gno.land',
+    color: 'var(--line-gno)',
+    blurb: 'Virtual machine, consensus, security, governance and docs.',
+  },
+  {
+    id: 'teach',
+    code: 'T',
+    name: 'Teaching',
+    color: 'var(--line-teach)',
+    blurb: 'Epitech Pools, project kick-offs and Peer Dev videos.',
+  },
+  {
+    id: 'offware',
+    code: 'O',
+    name: 'Offware',
+    color: 'var(--line-offware)',
+    blurb: 'Apps that keep working switched off.',
+  },
+  {
+    id: 'agents',
+    code: 'A',
+    name: 'Agents',
+    color: 'var(--line-agents)',
+    blurb: 'Learning agentic programming, in the open.',
+  },
+  {
+    id: 'roots',
+    code: 'R',
+    name: 'Roots',
+    color: 'var(--line-roots)',
+    blurb: 'Epitech, Seoul, Inria and my first web job.',
+  },
+];
+
+export const journey: Stop[] = [
+  {
+    when: '2025 – now',
+    role: 'Developer Relations Engineer',
+    org: 'Samourai Coop',
+    line: 'gno',
+    current: true,
+    points: [
+      'Contributor to Gno.land: +70 merged contributions and nearly 350 code reviews on the main repository.',
+      'Code across the virtual machine, network and consensus, security, governance, web explorer and developer tooling.',
+      'Documentation: installation, getting started, editor setup, local development, testing and fees.',
+      'Bug bounty triager on HackenProof for the Gno.land program.',
+    ],
+  },
+  {
+    when: '2025',
+    role: 'Junior pedagogue, internship',
+    org: 'Epitech',
+    line: 'teach',
+    points: [
+      'Mentored 1st, 2nd and 3rd year students on their projects and graded their work.',
+      'Led project kick-offs and organized the 1st and 2nd year Pools.',
+      'Built a Corewar hackathon, a Redcode VS Code extension and clang-format-epitech.',
+    ],
+  },
+  {
+    when: '2023 – 2024',
+    role: 'Student',
+    org: 'Chung-Ang University',
+    place: 'Seoul, South Korea',
+    line: 'roots',
+    points: [],
+  },
+  {
+    when: '2023',
+    role: 'OCaml library developer, internship',
+    org: 'Inria · LIP at ENS',
+    line: 'roots',
+    points: [
+      'Contributed to an OCaml library of active objects, so it can run across several machines.',
+      'Implemented an RPC module that lets a program call a function running on a remote machine.',
+    ],
+  },
+  {
+    when: '2022 – 2023',
+    role: 'Pedagogical assistant',
+    org: 'Epitech',
+    place: 'Lyon',
+    line: 'teach',
+    points: [
+      'Mentored 1st and 2nd year students through their projects and graded them.',
+      'Organized the 1st and 2nd year Pools, the intensive bootcamps that open each year.',
+    ],
+  },
+  {
+    when: '2022',
+    role: 'Full-stack web developer, internship',
+    org: 'Dafy Moto',
+    line: 'roots',
+    points: [
+      'Built a clone of dealabs.com in PHP with Symfony to learn web development.',
+      "Added features and automated tests to the company's internal tools.",
+    ],
+  },
+  {
+    when: '2020 – 2025',
+    role: "Master's degree in IT",
+    org: 'Epitech',
+    line: 'roots',
+    points: [],
+  },
+];
+
+/** The few numbers worth showing at a glance. */
+export const now = [
+  { value: '+70', label: 'merged contributions to Gno.land' },
+  { value: '~350', label: 'code reviews on Gno.land' },
+  { value: 'Triager', label: 'on HackenProof for the Gno.land bug bounty' },
+];
+
+export const interests = {
+  code: ['P2P', 'low-level programming', 'optimization', 'security', 'agentic programming'],
+  life: ['travelling', 'urbanism', 'transportation'],
+};
+
 export const site = {
-  /** Canonical origin — used for absolute URLs, sitemap, and Open Graph. */
   siteUrl: 'https://davd.fr',
 
-  /** Display name and short brand used in the header. */
-  name: 'David',
+  name: 'David Gozlan',
+  firstName: 'David',
   shortName: 'davd',
 
-  /** One-line "what I do", shown under the name on the home page. */
-  headline: 'DevRel at Samourai World · low-level & FOSS enthusiast.',
+  headline: 'Developer Relations Engineer at Samourai Coop · contributor to Gno.land',
 
-  /**
-   * "Who I am" — short bio paragraphs for the home page.
-   * Keep it human and honest; edit freely.
-   */
   bio: [
-    "I'm David, a developer advocate (DevRel) at Samourai World. My work is bridging the gap between low-level technology and the people who build with it — writing, explaining, and building in the open.",
-    "I'm happiest close to the metal: systems programming, understanding how things actually work under the hood, and free and open-source software. This site is where I keep my projects together and write down what I learn along the way, in a personal wiki.",
+    "I'm David, Developer Relations Engineer at Samourai Coop and contributor to Gno.land, a blockchain built on an interpreted Go virtual machine.",
+    "I'm drawn to P2P, low-level programming, optimization and security, and I'm learning agentic programming. On the side I build Offware, apps that keep working switched off.",
   ],
 
-  /** Optional short location line. Set to '' to hide. */
   location: 'France',
 
-  /** Contact email. Set to '' to hide the email link. */
   email: 'david.gzl@samourai.coop',
 
-  /**
-   * Optional avatar image in public/ (e.g. '/avatar.jpg'). Leave undefined to
-   * render a simple monogram instead.
-   */
-  avatar: undefined as string | undefined,
-
-  /** Primary navigation (header). */
   nav: [
     { label: 'Home', href: '/' },
+    { label: 'Experience', href: '/#experience' },
     { label: 'Projects', href: '/projects' },
-    { label: 'Wiki', href: '/wiki' },
+    { label: 'Wiki', href: 'https://davd-gzl.github.io/personal-wiki/' },
   ] satisfies NavItem[],
 
-  /** Contact & social links (footer + home). */
   socials: [
     { label: 'GitHub', href: 'https://github.com/davd-gzl', icon: 'github' },
-    { label: 'Samourai World', href: 'https://github.com/samouraiworld', icon: 'link' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/david-gzl', icon: 'linkedin' },
+    { label: 'Peer Dev', href: 'https://www.youtube.com/@peerdevlearning', icon: 'youtube' },
     { label: 'Email', href: 'mailto:david.gzl@samourai.coop', icon: 'email' },
   ] satisfies SocialLink[],
 
-  /** Default meta description for pages that don't set their own. */
   description:
-    "David's personal site — projects, a personal wiki, and a short intro to who I am.",
+    'David Gozlan, Developer Relations Engineer at Samourai Coop and contributor to Gno.land. Projects, experience and what I like.',
 } as const;
 
 export type Site = typeof site;

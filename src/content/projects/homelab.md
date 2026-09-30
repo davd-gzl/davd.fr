@@ -4,6 +4,7 @@ summary: "A self-hosted playground for learning infrastructure — containers, b
 tags: ["docker", "self-hosting", "linux", "devops"]
 date: 2025-11-15
 featured: false
+draft: true
 ---
 
 > Starter entry — replace with your real project, or delete the file.

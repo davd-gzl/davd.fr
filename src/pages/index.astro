@@ -1,83 +1,93 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import WikiCard from '../components/WikiCard.astro';
-import { site } from '../config/site';
-import { getProjects, getWikiEntries, wikiUpdated } from '../lib/content';
+import MetroMap from '../components/MetroMap.astro';
+import Journey from '../components/Journey.astro';
+import NetworkBackground from '../components/NetworkBackground.astro';
+import { site, now, interests } from '../config/site';
+import { getProjects } from '../lib/content';
 
 const projects = await getProjects();
-// Show featured on the home page; fall back to the most recent few.
-const featured = projects.filter((p) => p.data.featured).slice(0, 3);
-const highlights = featured.length > 0 ? featured : projects.slice(0, 3);
+const featured = projects.filter((p) => p.data.featured).slice(0, 6);
 
-const wiki = await getWikiEntries();
-const recentNotes = wiki.slice(0, 3);
+/** "a, b and c", keeping each item as written. */
+const join = (items: readonly string[]) =>
+  items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}` : items[0];
 ---
 
 <BaseLayout>
+  <NetworkBackground />
+
   <section class="container hero">
-    <p class="eyebrow">{site.headline}</p>
-    <h1>Hi, I'm {site.name}.</h1>
+    <h1>Hi, I'm {site.firstName}.</h1>
     <div class="bio">
       {site.bio.map((para) => <p>{para}</p>)}
     </div>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="/projects">View projects</a>
-      <a class="btn btn-ghost" href="/wiki">Browse the wiki</a>
-      {site.email && <a class="btn btn-ghost" href={`mailto:${site.email}`}>Get in touch</a>}
-    </div>
+    <p class="hero-links">
+      {site.socials.map((s, i) => (
+        <Fragment>
+          {i > 0 && <span class="sep" aria-hidden="true">·</span>}
+          <a
+            href={s.href}
+            rel={s.href.startsWith('http') ? 'me noopener' : undefined}
+            target={s.href.startsWith('http') ? '_blank' : undefined}
+          >
+            {s.label}
+          </a>
+        </Fragment>
+      ))}
+    </p>
   </section>
 
-  {
-    highlights.length > 0 && (
-      <section class="container section">
-        <div class="section-head">
-          <h2>Selected projects</h2>
-          <a href="/projects">All projects →</a>
-        </div>
-        <ul class="card-grid">
-          {highlights.map((p) => (
-            <ProjectCard
-              href={`/projects/${p.id}`}
-              title={p.data.title}
-              summary={p.data.summary}
-              tags={p.data.tags}
-              repo={p.data.repo}
-              url={p.data.url}
-              featured={p.data.featured}
-            />
-          ))}
-        </ul>
-      </section>
-    )
-  }
+  <section class="container section map-section" aria-label="Map of my work">
+    <MetroMap />
+  </section>
+
+  <section class="container section" aria-labelledby="now-title">
+    <h2 id="now-title">Now</h2>
+    <ul class="now">
+      {now.map((n) => (
+        <li>
+          <span class="now-value">{n.value}</span>
+          <span class="now-label">{n.label}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container section" id="experience">
+    <h2>Experience</h2>
+    <Journey />
+  </section>
 
   <section class="container section">
     <div class="section-head">
-      <h2>Latest from the wiki</h2>
-      <a href="/wiki">Open the wiki →</a>
+      <h2>Projects</h2>
+      <a href="/projects">See all</a>
     </div>
-    <p class="lead" style="margin-bottom: var(--space-5)">
-      A living knowledge base — notes, how-tos, and references I collect as I build.
+    <ul class="card-grid">
+      {featured.map((p) => (
+        <ProjectCard
+          href={`/projects/${p.id}`}
+          title={p.data.title}
+          summary={p.data.summary}
+          tags={p.data.tags}
+          repo={p.data.repo}
+          url={p.data.url}
+          line={p.data.line}
+        />
+      ))}
+    </ul>
+  </section>
+
+  <section class="container section likes" aria-labelledby="likes-title">
+    <h2 id="likes-title">What I like</h2>
+    <p>
+      In code: {join(interests.code)}. Outside of it: {join(interests.life)}.
     </p>
-    {
-      recentNotes.length > 0 ? (
-        <ul class="card-grid">
-          {recentNotes.map((e) => (
-            <WikiCard
-              href={`/wiki/${e.id}`}
-              title={e.data.title}
-              summary={e.data.summary}
-              updated={wikiUpdated(e)}
-              tags={e.data.tags}
-            />
-          ))}
-        </ul>
-      ) : (
-        <div class="empty-state">
-          <p style="margin:0">Notes are on their way.</p>
-        </div>
-      )
-    }
+    <p>
+      I'm a curious person who wants to contribute to the greater good, and I'm
+      open to contributing to new projects.
+    </p>
   </section>
 </BaseLayout>

@@ -5,22 +5,35 @@
    ========================================================================== */
 
 :root {
-  /* Palette (light) */
-  --bg: #ffffff;
-  --bg-subtle: #f6f7f9;
-  --surface: #ffffff;
-  --border: #e6e8eb;
-  --text: #1a1d21;
-  --text-muted: #5a6169;
-  --accent: #2f6fed;
-  --accent-hover: #1f57c8;
+  /* Palette (light): a paper transit map */
+  --bg: #f5f1e8;
+  --bg-subtle: #ece6d8;
+  --surface: #fffdf8;
+  --border: #ddd5c3;
+  --text: #17191e;
+  --text-muted: #5b5f68;
+  --accent: #d62839;
+  --accent-hover: #b01f2e;
   --accent-contrast: #ffffff;
-  --code-bg: #f6f7f9;
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --code-bg: #ece6d8;
+  --shadow: 0 1px 2px rgba(40, 30, 10, 0.06), 0 6px 20px rgba(40, 30, 10, 0.08);
+  --map-grid: rgba(23, 25, 30, 0.06);
+  --board-bg: #14161b;
+  --board-text: #ffb627;
+  --station-fill: #fffdf8;
+
+  /* Metro lines */
+  --line-gno: #d62839;
+  --line-teach: #1f6fd1;
+  --line-offware: #0f9d63;
+  --line-agents: #e89b00;
+  --line-roots: #7d4fc9;
 
   /* Typography */
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Charter, "Source Serif Pro",
+    Georgia, ui-serif, serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
   --text-xs: 0.8125rem;
@@ -49,37 +62,53 @@
   --radius-sm: 8px;
 }
 
-/* Dark tokens, defined once and applied to two selectors below. */
+/* Dark tokens: the same map at night. */
 @media (prefers-color-scheme: dark) {
-  /* System preference is dark — apply unless the visitor forced light. */
   :root:not([data-theme="light"]) {
-    --bg: #0f1216;
-    --bg-subtle: #151a20;
-    --surface: #161b22;
-    --border: #262d36;
-    --text: #e7eaee;
-    --text-muted: #9aa4b0;
-    --accent: #6ea0ff;
-    --accent-hover: #8fb6ff;
-    --accent-contrast: #0f1216;
-    --code-bg: #11161c;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --bg: #0c1018;
+    --bg-subtle: #121826;
+    --surface: #131a28;
+    --border: #232c3d;
+    --text: #e9edf4;
+    --text-muted: #97a1b3;
+    --accent: #ff5a67;
+    --accent-hover: #ff7c86;
+    --accent-contrast: #0c1018;
+    --code-bg: #0f1522;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 30px rgba(0, 0, 0, 0.4);
+    --map-grid: rgba(233, 237, 244, 0.05);
+    --board-bg: #07090e;
+    --board-text: #ffc247;
+    --station-fill: #0c1018;
+    --line-gno: #ff4d5e;
+    --line-teach: #4a93ff;
+    --line-offware: #25c483;
+    --line-agents: #ffb627;
+    --line-roots: #a47bff;
   }
 }
 
-/* Visitor explicitly chose dark (overrides system preference). */
 :root[data-theme="dark"] {
-  --bg: #0f1216;
-  --bg-subtle: #151a20;
-  --surface: #161b22;
-  --border: #262d36;
-  --text: #e7eaee;
-  --text-muted: #9aa4b0;
-  --accent: #6ea0ff;
-  --accent-hover: #8fb6ff;
-  --accent-contrast: #0f1216;
-  --code-bg: #11161c;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --bg: #0c1018;
+  --bg-subtle: #121826;
+  --surface: #131a28;
+  --border: #232c3d;
+  --text: #e9edf4;
+  --text-muted: #97a1b3;
+  --accent: #ff5a67;
+  --accent-hover: #ff7c86;
+  --accent-contrast: #0c1018;
+  --code-bg: #0f1522;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 30px rgba(0, 0, 0, 0.4);
+  --map-grid: rgba(233, 237, 244, 0.05);
+  --board-bg: #07090e;
+  --board-text: #ffc247;
+  --station-fill: #0c1018;
+  --line-gno: #ff4d5e;
+  --line-teach: #4a93ff;
+  --line-offware: #25c483;
+  --line-agents: #ffb627;
+  --line-roots: #a47bff;
 }
 
 /* ------------------------------ base ------------------------------------ */
@@ -674,4 +703,340 @@ main {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* =============================== home =================================== */
+
+/* The 3D network sits behind everything and never takes a click. */
+.net-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Headings in a serif, so the page reads like a person wrote it. */
+h1,
+h2 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.section > h2,
+.section-head h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-5);
+}
+
+.hero {
+  padding-block: var(--space-10) var(--space-6);
+}
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  line-height: 1.05;
+  margin-bottom: var(--space-5);
+}
+.hero .bio {
+  font-size: var(--text-lg);
+  max-width: 38rem;
+}
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  font-weight: 500;
+}
+.hero-links .sep {
+  color: var(--text-muted);
+}
+
+/* Map */
+.map-section {
+  padding-top: 0;
+}
+.metro {
+  margin: 0;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(2px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+.metro-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.metro-grid line {
+  stroke: var(--map-grid);
+  stroke-width: 1;
+}
+.route-casing {
+  fill: none;
+  stroke: var(--surface);
+  stroke-width: 18;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.route-path {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: draw 1.6s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+}
+.route-teach .route-path { animation-delay: 0.15s; }
+.route-offware .route-path { animation-delay: 0.3s; }
+.route-agents .route-path { animation-delay: 0.45s; }
+.route-roots .route-path { animation-delay: 0.6s; }
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.train {
+  fill: var(--surface);
+  stroke: var(--c);
+  stroke-width: 3;
+}
+.station circle {
+  fill: var(--station-fill);
+  stroke: var(--c);
+  stroke-width: 4;
+  transition: r 0.15s ease, fill 0.15s ease;
+}
+.station:hover circle,
+.station:focus-visible circle {
+  r: 13;
+  fill: var(--c);
+}
+.map-label {
+  fill: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+.station:hover .map-label {
+  fill: var(--c);
+}
+.hub rect {
+  fill: var(--text);
+  stroke: var(--surface);
+  stroke-width: 4;
+}
+.hub text {
+  fill: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 19px;
+}
+.hub:hover rect {
+  fill: var(--accent);
+}
+.roundel {
+  display: inline-grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--c);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.metro-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-3);
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid var(--border);
+}
+.metro-legend li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+.legend-blurb {
+  display: block;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+@media (max-width: 640px) {
+  .map-label {
+    display: none;
+  }
+  .metro {
+    padding: var(--space-3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .train {
+    display: none;
+  }
+  .route-path {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+}
+
+/* Now: three numbers, no chrome */
+.now {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-5);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.now li {
+  border-top: 2px solid var(--text);
+  padding-top: var(--space-3);
+}
+.now-value {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+}
+.now-label {
+  color: var(--text-muted);
+}
+
+/* Experience */
+.journey {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.stop {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+}
+.stop::before {
+  content: "";
+  position: absolute;
+  left: calc(0.5rem - 1px);
+  top: 1.1rem;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.stop:last-child::before {
+  display: none;
+}
+.stop-dot {
+  position: relative;
+  z-index: 1;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.3rem;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 3px solid var(--c);
+}
+.stop.current .stop-dot {
+  background: var(--c);
+}
+.stop-when {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: 0;
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.current-tag {
+  color: var(--c);
+  font-weight: 600;
+}
+.stop-body h3 {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-lg);
+}
+.stop-org {
+  color: var(--text-muted);
+  margin: 0 0 var(--space-2);
+}
+.stop-body ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: var(--text-sm);
+  max-width: var(--container-prose);
+}
+.stop-body li + li {
+  margin-top: var(--space-1);
+}
+
+/* Project cards: a coloured edge, no lift */
+.card,
+.card:hover {
+  transform: none;
+  box-shadow: none;
+}
+.project-card {
+  border-left: 3px solid var(--c);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+.project-card:hover {
+  border-color: var(--border);
+  border-left-color: var(--c);
+}
+.card-kind {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.kind-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--c);
+}
+.card h3 a:hover {
+  color: var(--c, var(--accent));
+}
+
+/* What I like */
+.likes p {
+  max-width: var(--container-prose);
+  font-size: var(--text-lg);
+}
+
+@media (max-width: 480px) {
+  .nav {
+    gap: 0;
+  }
+  .nav a {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+  }
+  .brand::before {
+    content: "";
+  }
+  /* The brand already links home. */
+  .nav a[href="/"] {
+    display: none;
+  }
 }

@@ -8,13 +8,13 @@ const projects = await getProjects();
 
 <BaseLayout
   title="Projects"
-  description="Things I've built — tools, experiments, and shipped work."
+  description="What I work on: Gno.land, teaching, Offware, agents and a few other projects."
 >
   <div class="container section">
     <div class="section-head">
       <h2>Projects</h2>
     </div>
-    <p class="lead">Things I've built — tools, experiments, and shipped work.</p>
+    <p class="lead">What I work on: Gno.land, teaching, Offware, agents and a few other projects.</p>
 
     {
       projects.length > 0 ? (
@@ -28,12 +28,13 @@ const projects = await getProjects();
               repo={p.data.repo}
               url={p.data.url}
               featured={p.data.featured}
+              line={p.data.line}
             />
           ))}
         </ul>
       ) : (
         <div class="empty-state" style="margin-top: var(--space-6)">
-          <p style="margin:0">No projects published yet — check back soon.</p>
+          <p style="margin:0">No projects published yet.</p>
         </div>
       )
     }

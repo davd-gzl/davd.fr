@@ -5,6 +5,7 @@ category: "Development"
 tags: ["git", "shell", "productivity"]
 created: 2026-05-02
 updated: 2026-06-10
+draft: true
 ---
 
 I keep my Git aliases small — only the ones I reach for constantly. They live in my

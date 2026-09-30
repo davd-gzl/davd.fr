@@ -1,18 +1,28 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { lines } from '../config/site';
 
 // Drafts are visible in dev but excluded from production builds.
 const includeInBuild = (draft: boolean) => import.meta.env.PROD === false || !draft;
 
-/** Projects sorted: featured first, then newest date, then title. */
+/** Projects sorted: featured first, then by metro line order, then newest date, then title. */
 export async function getProjects(): Promise<CollectionEntry<'projects'>[]> {
   const projects = await getCollection('projects', ({ data }) => includeInBuild(data.draft));
   return projects.sort((a, b) => {
     if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+    const ar = lineRank(a.data.line);
+    const br = lineRank(b.data.line);
+    if (ar !== br) return ar - br;
     const ad = a.data.date?.getTime() ?? 0;
     const bd = b.data.date?.getTime() ?? 0;
     if (ad !== bd) return bd - ad;
     return a.data.title.localeCompare(b.data.title);
   });
+}
+
+/** Position of a line on the map; projects on no line sort last. */
+function lineRank(line: string | undefined): number {
+  const i = lines.findIndex((l) => l.id === line);
+  return i === -1 ? lines.length : i;
 }
 
 /** The effective "last touched" date for a wiki entry. */

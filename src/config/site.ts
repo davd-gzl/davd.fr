@@ -78,8 +78,7 @@ export const site = {
   email: 'david.gzl@samourai.coop',
 
   nav: [
-    { label: 'Home', href: '/' },
-    { label: 'Projects', href: '/projects' },
+    { label: 'Blog', href: '/blog' },
     { label: 'Wiki', href: 'https://davd-gzl.github.io/personal-wiki/' },
   ] satisfies NavItem[],
 

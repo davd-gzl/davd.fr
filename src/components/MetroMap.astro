@@ -16,7 +16,7 @@ const tracks: Record<string, string> = {
   offware: 'M450 260 L520 330 H900',
   teach: 'M450 260 L390 200 H20',
   side: 'M450 260 L380 330 H20',
-  agents: 'M450 260 V150 L480 120 V10',
+  agents: 'M450 260 V150 L480 120 V24',
 };
 
 /** The corner points of a track written with M, H, V and L only. */
@@ -51,9 +51,9 @@ const routes = lines.map((l) => {
     const label = horizontal
       ? { x, y: y + (up ? -20 : 32), anchor: 'middle' }
       : { x: x + (up ? 18 : -18), y: y + 6, anchor: up ? 'start' : 'end' };
-    return { id: p.id, title: p.data.title, summary: p.data.summary, x, y, label };
+    return { id: p.id, title: p.data.title, summary: p.data.summary, url: p.data.url, x, y, label };
   });
-  return { line: l, d, stations };
+  return { line: l, d, stations, end: b };
 });
 ---
 
@@ -81,6 +81,10 @@ const routes = lines.map((l) => {
             <mpath href={`#path-${r.line.id}`} />
           </animateMotion>
         </circle>
+        <a href={`#${r.line.id}`} class="terminus" aria-label={`${r.line.name} projects`}>
+          <circle cx={r.end[0]} cy={r.end[1]} r="15" />
+          <text x={r.end[0]} y={r.end[1] + 5} text-anchor="middle">{r.line.code}</text>
+        </a>
       </g>
     ))}
 
@@ -93,6 +97,7 @@ const routes = lines.map((l) => {
           data-title={s.title}
           data-summary={s.summary}
           data-line={r.line.name}
+          data-url={s.url}
         >
           <title>{s.title}: {s.summary}</title>
           <circle cx={s.x} cy={s.y} r="9" />
@@ -109,11 +114,22 @@ const routes = lines.map((l) => {
     </g>
   </svg>
 
+  <div class="panel map-text">
+  <ul class="map-key">
+    {routes.map((r) => (
+      <li style={`--c:${r.line.color}`}>
+        <a href={`#${r.line.id}`}><span class="roundel roundel-sm" aria-hidden="true">{r.line.code}</span>{r.line.name}</a>
+      </li>
+    ))}
+  </ul>
+
   <figcaption class="map-panel" data-panel aria-live="polite">
     <p class="map-panel-line" data-panel-line>{projects.length} projects on {lines.length} lines</p>
     <p class="map-panel-title" data-panel-title>Pick a station to see the project.</p>
     <p class="map-panel-summary" data-panel-summary></p>
+    <p class="stop-links"><a class="open" data-panel-open hidden target="_blank" rel="noopener"></a></p>
   </figcaption>
+  </div>
 </figure>
 
 <script is:inline>
@@ -123,11 +139,18 @@ const routes = lines.map((l) => {
     var line = panel.querySelector('[data-panel-line]');
     var title = panel.querySelector('[data-panel-title]');
     var summary = panel.querySelector('[data-panel-summary]');
+    var open = panel.querySelector('[data-panel-open]');
     function show(st) {
       panel.style.setProperty('--c', st.style.getPropertyValue('--c'));
       line.textContent = st.dataset.line;
       title.textContent = st.dataset.title;
       summary.textContent = st.dataset.summary;
+      var url = st.dataset.url;
+      open.hidden = !url;
+      if (url) {
+        open.href = url;
+        open.textContent = 'open ' + st.dataset.title + ' \u2197';
+      }
     }
     document.querySelectorAll('.station').forEach(function (st) {
       st.addEventListener('mouseenter', function () { show(st); });

@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import ProseLayout from '../../layouts/ProseLayout.astro';
 import { getProjects } from '../../lib/content';
+import { lines } from '../../config/site';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths = (async () => {
@@ -13,27 +14,23 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const { title, summary, tags, repo, url, date } = entry.data;
 const dateLabel = date ? date.toISOString().slice(0, 10) : undefined;
+const line = lines.find((l) => l.id === entry.data.line);
 ---
 
-<ProseLayout title={title} description={summary} backHref="/projects" backLabel="Projects">
-  <div slot="meta">
-    <p class="lead" style="margin-bottom: var(--space-3)">{summary}</p>
-    <div class="article-meta">
+<ProseLayout title={title} description={summary} backHref="/" backLabel="All projects">
+  <div slot="meta" class="project-meta" style={`--c:${line?.color ?? 'var(--text-muted)'}`}>
+    <p class="lead">{summary}</p>
+    <p class="project-facts">
+      {line && <span class="project-line">{line.name}</span>}
       {dateLabel && <time datetime={dateLabel}>{dateLabel}</time>}
-      {
-        tags.length > 0 && (
-          <ul class="tags">
-            {tags.map((t) => <li class="tag">{t}</li>)}
-          </ul>
-        )
-      }
-    </div>
+      {tags.length > 0 && <span>{tags.join(' · ')}</span>}
+    </p>
     {
       (repo || url) && (
-        <div class="article-links">
-          {url && <a class="btn btn-primary" href={url} target="_blank" rel="noopener">Visit live ↗</a>}
-          {repo && <a class="btn btn-ghost" href={repo} target="_blank" rel="noopener">View code ↗</a>}
-        </div>
+        <p class="stop-links">
+          {url && <a class="open" href={url} target="_blank" rel="noopener">open {title} ↗</a>}
+          {repo && <a href={repo} target="_blank" rel="noopener">code ↗</a>}
+        </p>
       )
     }
   </div>

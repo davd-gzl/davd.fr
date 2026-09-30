@@ -1,0 +1,36 @@
+---
+// Every project, line by line, drawn like the strip map above a train door:
+// one coloured bar per line with a stop for each project.
+import { lines } from '../config/site';
+import { getProjects } from '../lib/content';
+
+const projects = await getProjects();
+const groups = lines
+  .map((l) => ({ line: l, items: projects.filter((p) => p.data.line === l.id) }))
+  .filter((g) => g.items.length > 0);
+
+---
+
+<div class="timetable">
+  {groups.map((g) => (
+    <section class="panel strip" style={`--c:${g.line.color}`} id={g.line.id} aria-labelledby={`strip-${g.line.id}`}>
+      <header class="strip-head">
+        <span class="roundel" aria-hidden="true">{g.line.code}</span>
+        <h2 id={`strip-${g.line.id}`}>{g.line.name}</h2>
+        <p>{g.line.blurb}</p>
+      </header>
+      <ol class="stops">
+        {g.items.map((p) => (
+          <li class="stop">
+            <a class="stop-name" href={`/projects/${p.id}`}>{p.data.title}</a>
+            <p class="stop-summary">{p.data.summary}</p>
+            <p class="stop-links">
+              {p.data.url && <a class="open" href={p.data.url} target="_blank" rel="noopener">open {p.data.title} ↗</a>}
+              {p.data.repo && <a href={p.data.repo} target="_blank" rel="noopener">code ↗</a>}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  ))}
+</div>

@@ -30,12 +30,8 @@
   --line-roots: #7d4fc9;
 
   /* Typography */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Charter, "Source Serif Pro",
-    Georgia, ui-serif, serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
+  --font-sans: "Overpass Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Overpass Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-base: 1.0625rem;
@@ -340,7 +336,10 @@ main {
 /* ---------------------------- footer ----------------------------------- */
 
 .site-footer {
+  background: var(--bg);
   border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   color: var(--text-muted);
   font-size: var(--text-sm);
   padding-block: var(--space-6);
@@ -365,9 +364,8 @@ main {
   align-items: center;
   gap: var(--space-2);
   color: var(--text-muted);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
 }
 .social-links a:hover {
   color: var(--text);
@@ -707,6 +705,41 @@ main {
 
 /* =============================== home =================================== */
 
+h1,
+h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.hero {
+  padding-block: var(--space-8) var(--space-4);
+}
+.hero h1 {
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  line-height: 1;
+  margin-bottom: var(--space-3);
+}
+.hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+.hero-links a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 0.25em;
+}
+.hero-links a:hover {
+  text-decoration-color: currentColor;
+}
+.hero-links .sep {
+  color: var(--text-muted);
+}
+
 /* The 3D network sits behind everything and never takes a click. */
 .net-bg {
   position: fixed;
@@ -717,53 +750,32 @@ main {
   pointer-events: none;
 }
 
-/* Headings in a serif, so the page reads like a person wrote it. */
-h1,
-h2 {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  letter-spacing: -0.015em;
+/* A frosted box behind text, so the network never runs through the words */
+.panel {
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
 }
-.section > h2,
-.section-head h2 {
-  font-size: var(--text-2xl);
-  margin-bottom: var(--space-5);
+.hero-card {
+  display: inline-block;
+  padding: var(--space-5) var(--space-6);
 }
-
-.hero {
-  padding-block: var(--space-10) var(--space-6);
+.map-text {
+  margin-top: var(--space-3);
 }
-.hero h1 {
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  line-height: 1.05;
-  margin-bottom: var(--space-5);
-}
-.hero .bio {
-  font-size: var(--text-lg);
-  max-width: 38rem;
-}
-.hero-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-5);
-  font-weight: 500;
-}
-.hero-links .sep {
-  color: var(--text-muted);
+.map-text .map-key {
+  margin-top: 0;
 }
 
-/* Map */
+/* Map: drawn straight on the page, no frame */
 .map-section {
-  padding-top: 0;
+  padding-block: var(--space-2) var(--space-6);
 }
 .metro {
   margin: 0;
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  backdrop-filter: blur(2px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-4);
 }
 .metro-svg {
   display: block;
@@ -776,7 +788,7 @@ h2 {
 }
 .route-casing {
   fill: none;
-  stroke: var(--surface);
+  stroke: var(--bg);
   stroke-width: 18;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -801,12 +813,15 @@ h2 {
   }
 }
 .train {
-  fill: var(--surface);
+  fill: var(--bg);
   stroke: var(--c);
   stroke-width: 3;
 }
+.station {
+  cursor: pointer;
+}
 .station circle {
-  fill: var(--station-fill);
+  fill: var(--bg);
   stroke: var(--c);
   stroke-width: 4;
   transition: r 0.15s ease, fill 0.15s ease;
@@ -820,9 +835,9 @@ h2 {
   fill: var(--text);
   font-family: var(--font-sans);
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   paint-order: stroke;
-  stroke: var(--surface);
+  stroke: var(--bg);
   stroke-width: 5px;
   stroke-linejoin: round;
 }
@@ -831,7 +846,7 @@ h2 {
 }
 .hub rect {
   fill: var(--text);
-  stroke: var(--surface);
+  stroke: var(--bg);
   stroke-width: 4;
 }
 .hub text {
@@ -840,28 +855,34 @@ h2 {
   font-weight: 700;
   font-size: 19px;
 }
-.hub:hover rect {
-  fill: var(--accent);
+.map-panel {
+  border-left: 4px solid var(--c, var(--border));
+  padding: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
+  min-height: 5.5rem;
+  transition: border-color 0.15s ease;
 }
-.roundel {
-  display: inline-grid;
-  place-items: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  flex: none;
-  border-radius: 50%;
-  background: var(--c);
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.8rem;
-  line-height: 1;
+.map-panel p {
+  margin: 0;
+}
+.map-panel-line {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.map-panel-title {
+  font-size: var(--text-xl);
+  font-weight: 800;
+}
+.map-panel-summary {
+  color: var(--text-muted);
+  max-width: var(--container-prose);
 }
 @media (max-width: 640px) {
   .map-label {
     display: none;
-  }
-  .metro {
-    padding: var(--space-3);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -874,76 +895,202 @@ h2 {
   }
 }
 
-/* Map panel: the project under the pointer */
-.map-panel {
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border);
-  min-height: 5.5rem;
+/* The letter at the end of each line, and the key under the map */
+.terminus circle {
+  fill: var(--c);
+  stroke: var(--bg);
+  stroke-width: 4;
 }
-.map-panel p {
-  margin: 0;
+.terminus text {
+  fill: #fff;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 16px;
 }
-.map-panel-line {
-  color: var(--c, var(--text-muted));
+.terminus:hover circle {
+  stroke: var(--c);
+}
+.map-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: 700;
 }
-.map-panel-title {
-  font-family: var(--font-serif);
+.map-key a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text);
+}
+.map-key a:hover {
+  color: var(--c);
+  text-decoration: none;
+}
+.roundel-sm {
+  width: 1.3rem;
+  height: 1.3rem;
+  font-size: 0.7rem;
+}
+
+/* Roundel: a line's letter */
+.roundel {
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--c);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* Timetable: one strip per line, one stop per project */
+.timetable {
+  display: grid;
+  gap: var(--space-8);
+}
+.strip-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+.strip-head h2 {
+  margin: 0;
   font-size: var(--text-xl);
-  font-weight: 600;
 }
-.map-panel-summary {
+.strip-head p {
+  grid-column: 2;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.stops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* Each stop draws the bar down to the next one, so the strip ends at its last stop. */
+.stop {
+  position: relative;
+  padding: 0 0 var(--space-5) calc(var(--space-6) + 1rem);
+}
+.stop:last-child {
+  padding-bottom: 0;
+}
+.stop::after {
+  content: "";
+  position: absolute;
+  left: calc(0.95rem - 4px);
+  top: 0.9rem;
+  bottom: -0.9rem;
+  width: 8px;
+  background: var(--c);
+}
+.stop:last-child::after {
+  display: none;
+}
+.stop::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: calc(0.95rem - 11px);
+  top: 0.15rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 5px solid var(--c);
+  box-sizing: border-box;
+}
+.stop-name {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--text);
+}
+.stop-name:hover {
+  color: var(--c);
+  text-decoration: none;
+}
+.stop-summary {
+  margin: var(--space-1) 0;
   color: var(--text-muted);
   max-width: var(--container-prose);
 }
-.station {
-  cursor: pointer;
-}
-
-/* One section per line */
-.line-group h2 {
+.stop-links {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-1);
-}
-.line-blurb {
-  color: var(--text-muted);
-  margin: 0 0 var(--space-5);
-}
-
-/* Project cards: a coloured edge, no lift */
-.card,
-.card:hover {
-  transform: none;
-  box-shadow: none;
-}
-.project-card {
-  border-left: 3px solid var(--c);
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-}
-.project-card:hover {
-  border-color: var(--border);
-  border-left-color: var(--c);
-}
-.card-kind {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  flex-wrap: wrap;
+  gap: var(--space-4);
   margin: 0;
-  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+.stop-links a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--c);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+
+/* A project's own page */
+.project-meta {
+  border-left: 4px solid var(--c);
+  padding-left: var(--space-4);
+}
+.project-meta .lead {
+  margin-bottom: var(--space-2);
+}
+.project-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   color: var(--text-muted);
 }
-.kind-dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
-  background: var(--c);
+.project-line {
+  color: var(--c);
+  font-weight: 700;
 }
-.card h3 a:hover {
-  color: var(--c, var(--accent));
+
+.stop-links a.open {
+  background: var(--c);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 0.15em 0.6em;
+  border-radius: 4px;
+}
+.stop-links a.open:hover {
+  filter: brightness(1.1);
+}
+/* Yellow is too light for white text. */
+[style*="line-agents"] .stop-links a.open {
+  color: #17191e;
+}
+.map-panel .stop-links {
+  margin-top: var(--space-2);
+}
+
+/* Blog, while it waits for posts */
+.wip-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  background: var(--line-agents);
+  color: #17191e;
+  padding: 0 var(--space-2);
+  border-radius: 4px;
 }
 
 @media (max-width: 480px) {
@@ -956,9 +1103,5 @@ h2 {
   }
   .brand::before {
     content: "";
-  }
-  /* The brand already links home. */
-  .nav a[href="/"] {
-    display: none;
   }
 }
